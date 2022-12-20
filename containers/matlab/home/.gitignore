@@ -1,0 +1,17 @@
+# Ignore everything
+/*
+/.*
+
+# But these files/folders
+!Desktop/
+!Documents/waMatlab/
+!Documents/startup.m
+
+!.vnc/
+!.vnc/xstartup
+!.vnc/passwd
+.vnc/*
+
+!.xscreensaver
+!network.lic
+!.gitignore

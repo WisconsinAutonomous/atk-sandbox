@@ -1,0 +1,114 @@
+project: atk-sandbox
+default_containers:
+  - dev
+hardware_specific_attributes:
+  - mac_address: 10:a5:1d:e9:53:cc
+    all:
+      security_opt:
+      - seccomp:unconfined
+custom_cli_arguments:
+  devices:
+    argparse:
+      action: 'store_true'
+    all:
+      privileged: true
+      environment:
+        UDEV: 1
+  x11:
+    argparse:
+      action: 'store_true'
+    all:
+      volumes:
+        - "/tmp/.X11-unix:/tmp/.X11-unix"
+      environment:
+        DISPLAY: $DISPLAY
+  cyclone:
+    argparse:
+      action: 'store_true'
+    all:
+      environment:
+        CYCLONEDDS_URI: "file:///home/@{project}/@{project}/misc/cyclonedds.xml"
+  seccomp:
+    argparse:
+      action: 'store_true'
+    all:
+      security_opt:
+      - seccomp:unconfined
+external:
+  db:
+    files:
+      - name: "pytorch-aarch64"
+        id: "1XEvtAMeOAJQx9kQoRhVNdZt07L4y1d-D"
+        output: "@{project_root}/containers/agx/scripts/pytorch/torch-1.9.0-python3.8-aarch64"
+      - name: "yolov5-weights"
+        id: "1oPs2Pa9llQl9Ee85ufeFCapvxaDD7woo"
+        output: "@{project_root}/workspace/src/perception/vision_detector/data/best"
+      - name: "tensorrt-aarch64"
+        id: "1QHvnrUrASsdVueiQeu6tRwZit5ANEskA"
+        output: "@{project_root{/containres/agx/scripts/tensorrt/tensorrt-8.2.3.0-cp38-none-linux_aarch64.whl"
+services:
+  dev: &dev_service
+    image: "atk/@{project}:dev"
+    hostname: "@{project}-dev"
+    command: ""
+    network_mode: "host"
+    container_name: "@{project}-dev"
+    entrypoint: ""
+    privileged: true
+    build: &dev_build
+      context: "./"
+      dockerfile: "./containers/dev/dev.dockerfile"
+      network: "host"
+      args: &dev_build_args
+        PROJECT: "@{project}"
+        USER_UID: "@{uid}"
+        USER_GID: "@{gid}"
+        APT_DEPENDENCIES: "bash zsh vim git git-lfs python3-pip python3-tk libusb-1.0.0-dev tmux libopencv-dev equivs qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools conntrack tcpdump net-tools "
+        PIP_REQUIREMENTS: "matplotlib python-can psutil black twisted numpy>=1.19 hdbscan tornado black cvxpy tqdm seaborn canlib scipy control"
+        MOSEKLM_LICENSE_FILE: "/home/@{project}/@{project}/containers/dev/mosek.lic"
+        USER_GROUPS: "video dialout flirimaging"
+        ROS_DISTRO: humble
+    environment: &dev_env_args
+      DISPLAY: $DISPLAY
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "all"
+      MOSEKLM_LICENSE_FILE: "/home/@{project}/@{project}/containers/dev/mosek.lic"
+      ROS_WORKSPACE_SRC: "/home/@{project}/@{project}/workspace/src/"
+    volumes: 
+      - "@{project_root}:/home/@{container_username}/@{project}"
+      - "./misc:/home/@{project}/Documents"
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+    tty: true
+    working_dir: "/home/@{container_username}/@{project}/workspace"
+  matlab:
+    image: "wiscauto/@{project}:matlab"
+    hostname: "sandbox-matlab"
+    container_name: "sandbox-matlab"
+    entrypoint: "/bin/run.sh"
+    build:
+      context: ./containers/matlab/
+      dockerfile: ./matlab.dockerfile
+      network: "host"
+      args:
+        USER_UID: "@{uid}"
+        USER_GID: "@{gid}"
+        MPM_PRODUCTS: "Automated_Driving_Toolbox Simulink Vehicle_Dynamics_Blockset ROS_Toolbox Sensor_Fusion_and_Tracking_Toolbox Image_Processing_Toolbox Computer_Vision_Toolbox Control_System_Toolbox System_Identification_Toolbox MATLAB_Coder Simulink_Coder Embedded_Coder"
+        APT_DEPENDENCIES: "cmake ccache zlib1g-dev build-essential xfce4-power-manager"
+        CONDA_CHANNELS: "anaconda"
+        CONDA_DEPENDENCIES: "python=3.9 pip numpy"
+        PIP_DEPENDENCIES: ""
+        MATLAB_RELEASE: r2022a
+        MATLAB_RELEASE_DIR: R2022a
+        USERHOME: "/home/matlab"
+        VNC_PASSWORD: "matlab"
+    ports:
+      - "6080:6080"
+    volumes:
+      - ./containers/matlab/home:/home/matlab
+      - ./sim/WAMatlab:/home/matlab/Documents/MATLAB/waMatlab
+      - ./workspace/src/common/interfaces/wauto_control_msgs:/home/matlab/Documents/MATLAB/waMatlab/custom_ros2_msgs/wauto_control_msgs
+    environment:
+      HOME: /home/matlab
+      MLM_LICENSE_FILE: /home/matlab/network.lic
+    shm_size: '512M'
+    command: "-vnc"

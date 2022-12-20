@@ -1,0 +1,1 @@
+cmd_/home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/virtualcan/kvvirtualcan.mod := { echo  /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/virtualcan/virtualcan.o;  echo; } > /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/virtualcan/kvvirtualcan.mod

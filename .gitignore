@@ -1,0 +1,54 @@
+# general things to ignore
+build/
+dist/
+.DS_Store
+*.egg-info/
+*.egg
+*.py[cod]
+__pycache__/
+*.so
+*~
+.*.swp
+workspace/utils
+workspace/data
+
+# due to using tox and pytest
+.tox
+.cache
+
+# Ignore the version file since it changes often
+_version.py
+
+# Except
+!.github/workflows/*
+
+# Docker/atk stuff
+.atk.user_count
+.atk-compose.yml
+.dockerignore
+.copyright.tmpl
+docker/dev/scripts/customize.sh
+docker/dev/scripts/customize/
+
+# ROS
+log
+install
+build
+COLCON_IGNORE
+
+# Ignore all bags
+*.db3
+*.bag
+ATK-*
+metadata.yaml
+
+# Ignore singularity specific files
+*singularity.temp
+etc.hosts
+resolv.conf
+*.sif
+.atk-singularity*.env
+
+# Random
+*.lic
+tmp*

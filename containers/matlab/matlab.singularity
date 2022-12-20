@@ -1,0 +1,72 @@
+Bootstrap: docker
+From: mathworks/matlab:@{MATLAB_RELEASE}
+
+%files
+	setup.sh /usr/bin/setup.sh
+	run.sh /usr/bin/run.sh
+
+%post
+	DEBIAN_FRONTEND=noninteractive
+
+	# Install some packages
+	apt-get update && apt-get install --no-install-recommends -y wget @APT_DEPENDENCIES
+
+	# Clean up to reduce image size
+	apt-get clean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+
+	# Run mpm to install MATLAB in the target location and delete the mpm installation afterwards
+	wget --quiet https://www.mathworks.com/mpm/glnxa64/mpm
+	chmod +x mpm
+	./mpm install \
+			--release=@{MATLAB_RELEASE} \
+			--destination=/opt/matlab/@{MATLAB_RELEASE_DIR} \
+			--products @MPM_PRODUCTS
+	rm -f mpm /tmp/mathworks_root.log 
+
+	# Install miniconda
+	wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+     /bin/bash ~/miniconda.sh -b -p /opt/conda
+
+	# Install chrono's packages
+	export PATH=/opt/conda/bin:$PATH
+	if [ -n "@{CONDA_DEPENDENCIES}" ]; then \
+		for c in @{CONDA_CHANNELS}; do \
+			conda config --append channels $c;	\
+		done; \
+		conda install @{CONDA_DEPENDENCIES}; \
+	fi
+
+	# Install some python packages
+	if [ -n "@{PIP_DEPENDENCIES}" ]; then \
+		pip install @{PIP_DEPENDENCIES}; \
+	fi
+
+	# Help matlab find numpy
+	ln -s /opt/conda/lib/python3.7/site-packages/numpy/core/include/numpy/ /usr/include/
+
+	# Clean up conda
+	conda clean -a -y
+
+	# noVNC
+	rm /opt/noVNC/index.html
+  ln -s /opt/noVNC/redirect.html /opt/noVNC/index.html
+
+	# User Setup
+	touch /.singularity.d/env/atk.sh
+	mkdir -p @{USERHOME}
+	/usr/bin/setup.sh -vnc
+
+%environment
+	export CONDA_DIR=/opt/conda
+	export PATH=/opt/conda/bin:$PATH
+	export PASSWORD=@VNC_PASSWORD
+
+	USERSHELL="bash"
+	USERSHELLPATH="/bin/${USERSHELL}"
+	USERSHELLPROFILE="${USERHOME}/.${USERSHELL}rc"
+
+	export USERSHELLPATH=${USERSHELLPATH}
+	export USERSHELLPROFILE=${USERSHELLPROFILE}
+
+%startscript
+	/usr/bin/run.sh -vnc

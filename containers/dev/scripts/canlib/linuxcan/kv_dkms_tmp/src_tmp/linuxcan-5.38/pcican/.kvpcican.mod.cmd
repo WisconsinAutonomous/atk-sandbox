@@ -1,0 +1,1 @@
+cmd_/home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/pcican/kvpcican.mod := { echo  /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/pcican/PciCanHwIf.o /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/pcican/dallas.o;  echo; } > /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/pcican/kvpcican.mod

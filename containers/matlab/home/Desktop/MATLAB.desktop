@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=MATLAB R2022a
+Comment=
+Exec=/opt/matlab/R2022a/bin/matlab
+Icon=/opt/matlab/R2022a/bin/glnxa64/cef_resources/matlab_icon.png
+Path=
+Terminal=true
+StartupNotify=false
+Path=/home/matlab/Documents/MATLAB

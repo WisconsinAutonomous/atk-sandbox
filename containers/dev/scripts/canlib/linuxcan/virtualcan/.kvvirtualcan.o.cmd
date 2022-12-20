@@ -1,0 +1,1 @@
+cmd_/home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/virtualcan/kvvirtualcan.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/virtualcan/kvvirtualcan.o /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/virtualcan/virtualcan.o

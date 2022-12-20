@@ -1,0 +1,1 @@
+cmd_/home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/usbcanII/usbcanII.mod := { echo  /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/usbcanII/usbcanHWIf.o;  echo; } > /home/wautodrive/wautodrive/containers/dev/scripts/canlib/linuxcan/usbcanII/usbcanII.mod
